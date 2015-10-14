@@ -115,6 +115,24 @@ def get_grades_by_title(title):
     return rows
 
 
+def get_title_grade_by_github(github1):
+    """Get a list of tuples that show the project titles and 
+    grades for a single student"""
+
+    QUERY = """
+        SELECT Grades.project_title, Grades.grade 
+        FROM Students
+            JOIN Grades ON Students.github = Grades.student_github
+        WHERE Students.github = :github
+        """
+    db_cursor = db.session.execute(QUERY, {'github' : github1})
+    rows = db_cursor.fetchall()
+    for row in rows:
+        print " For project {}, you received a grade of {}".format(row[0], row[1])
+    
+    return rows                             #Returns a list of tuples
+
+
 def handle_input():
     """Main loop.
 
@@ -163,7 +181,7 @@ if __name__ == "__main__":
     app = Flask(__name__)
     connect_to_db(app)
 
-    handle_input()
+    # handle_input()
 
     # To be tidy, we'll close our database connection -- though, since this
     # is where our program ends, we'd quit anyway.
